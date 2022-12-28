@@ -198,3 +198,15 @@ body{
 	display: flex;
 	justify-content: center;
 }
+
+
+.deleteButton {
+	width: 50px;
+	height: 50px;
+	background-color: #eea8e2;
+	cursor: pointer;
+	margin-left: 900px;
+	margin-top: -100px;
+	border-radius: 100%;
+	border-style: none;
+}

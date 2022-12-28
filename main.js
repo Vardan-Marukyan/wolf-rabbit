@@ -54,6 +54,7 @@ const createBoard = (gameNumber) => {
 	ControlBoard.appendChild(buttonDiv)
 	const strart = creatStartButton(buttonDiv)
 	const selectOption = creatSelectButton(buttonDiv, selectOpp)
+	createDeleteBoardButton(gameNumber,ControlBoard)
 	const gameBoard = creatGameBoard(ControlBoard)
 	const status = CreatStatusBoard(ControlBoard,gameboardNumber)	
 	const controlers = creatControler(ControlBoard,gameNumber, controlerOpp)
@@ -102,6 +103,13 @@ const creatGameBoard = (ControlBoard) => {
 	boardDiv.appendChild(mainBoard)
 }
 
+const createDeleteBoardButton = (gameNumber,ControlBoard) => {
+	const creatDeleteButton = document.createElement("button")
+	creatDeleteButton.classList.add(`deleteButton`, `deleteButton${gameNumber}`)
+	creatDeleteButton.innerHTML = "del"
+	ControlBoard.appendChild(creatDeleteButton)
+}
+
 const returnButton = (gameNumber) => {
 	const serch = document.querySelector(`.button_strat${gameNumber}`)
 		serch.addEventListener("click", () => {
@@ -114,6 +122,7 @@ newBoardButton.addEventListener("click", function(){
 	gameboardNumber++
 	createBoard(gameboardNumber)
 	returnButton(gameboardNumber)
+	deleteBoard(gameboardNumber)
 })
 
 const CreatStatusBoard = (ControlBoard,gameNumber) =>{
@@ -132,12 +141,21 @@ const CreatStatusBoard = (ControlBoard,gameNumber) =>{
 	status.appendChild(statusBoard)
 	statusBoard.appendChild(h2)
 
-} 
+}
+
+const deleteBoard = (gameNumber) => {
+	const ControlBoard = document.querySelector(`.ControlBoard${gameNumber}`)
+	const deleteButton = document.querySelector(`.deleteButton${gameNumber}`)
+	deleteButton.addEventListener("click", () => {
+		ControlBoard.remove()
+	})
+}
 
 const startGame = (gameNumber) => {
 	const serchControler = document.querySelector(`.controlersDiv${gameNumber}`)
 	const ControlBoard = document.querySelector(`.ControlBoard${gameNumber}`)
 	const selectValue = document.querySelector(`.play_select${gameNumber}`).value
+	const deleteButton = document.querySelector(`.deleteButton${gameNumber}`)
 
 	const gameBoard = document.querySelector(`.boardNumber${gameNumber}`)
 	const statusGame = document.querySelector(`.status${gameNumber}`)
@@ -152,7 +170,6 @@ const startGame = (gameNumber) => {
 	const creatMatrix = getEmptyMatrix(matrix,selectValue)
 	const boardWidth = setBoardSizeWidth(matrix.length,gameBoard)
 	characterAmount(matrix.length, gameSettings)
-
 	const setRabbit = placeCharacter(RABBIT_CELL, gameSettings.rabbit,matrix)
 	const setHome = placeCharacter(HOME_CELL, gameSettings.home,matrix)
 	const setwolvse = placeCharacter(WOLF_CELL, gameSettings.wolves,matrix)
@@ -290,18 +307,12 @@ const calcDistance = ([x1, y1]) => ([x2, y2]) =>
     Math.abs(x1 - x2) ** 2 + Math.abs(y1 - y2) ** 2
 
 
-const findeH = (allDirections,matrix,[RabbitCoordX,RabbitCoordY], wolvesCoord) => {
-	let minDistanceIndex = 0
 
+const findeH = (allDirections,matrix,[RabbitCoordX,RabbitCoordY], wolvesCoord) => {
 	const legalDirections = allDirections.filter((element) => isLegitimCellForWolf(element,matrix))
 	const distances = legalDirections.map((element) => calcDistance([RabbitCoordX, RabbitCoordY])(element))
 	const minDistance = distances.reduce((element1, element2, i) =>  Math.min(element1,element2))
-
-	distances.forEach((element, index) => {
-		if(element === minDistance ){
-			minDistanceIndex = index
-		}
-	})
+	const minDistanceIndex = distances.findIndex((element) => element === minDistance)
 	return legalDirections[minDistanceIndex]
 }
 
